@@ -12,5 +12,9 @@ class Category extends Model
     protected $fillable = [
         'name',
         'description',
+        'image',
+        'opening_hours',
+        'location',
+        'map_link',
     ];
 }
