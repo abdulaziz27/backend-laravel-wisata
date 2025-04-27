@@ -11,7 +11,7 @@ Route::get('/', function () {
 });
 
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'check.role'])->group(function () {
     Route::get('/home', function () {
         return view('pages.dashboard');
     })->name('home');
