@@ -14,4 +14,10 @@ class CategoryController extends Controller
         $categories = Category::orderBy('name', 'ASC')->get();
         return response()->json(['status' => 'success', 'data' => $categories], 200);
     }
+
+    public function show($id)
+    {
+        $category = Category::findOrFail($id);
+        return response()->json(['status' => 'success', 'data' => $category], 200);
+    }
 }

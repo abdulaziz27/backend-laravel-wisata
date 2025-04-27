@@ -16,6 +16,10 @@ return new class extends Migration
             $table->string('name');
             //description
             $table->text('description')->nullable();
+            $table->string('image')->nullable();
+            $table->string('opening_hours')->nullable();
+            $table->string('location')->nullable();
+            $table->string('map_link')->nullable();
             $table->timestamps();
         });
     }

@@ -28,10 +28,29 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required',
-
+            'description' => 'nullable',
+            'opening_hours' => 'nullable',
+            'location' => 'nullable',
+            'map_link' => 'nullable',
+            'image' => 'nullable|image|max:2048',
         ]);
 
-        Category::create($request->all());
+        $category = new Category;
+        $category->name = $request->name;
+        $category->description = $request->description;
+        $category->opening_hours = $request->opening_hours;
+        $category->location = $request->location;
+        $category->map_link = $request->map_link;
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->extension();
+            $image->storeAs('public/categories', $imageName);
+            $category->image = 'categories/' . $imageName;
+        }
+
+        $category->save();
+
         return redirect()->route('categories.index')->with('success', 'Category created successfully');
     }
 
@@ -44,9 +63,36 @@ class CategoryController extends Controller
     //update
     public function update(Request $request, Category $category)
     {
+        $request->validate([
+            'name' => 'required',
+            'description' => 'nullable',
+            'opening_hours' => 'nullable',
+            'location' => 'nullable',
+            'map_link' => 'nullable',
+            'image' => 'nullable|image|max:2048',
+        ]);
 
         $category->name = $request->name;
         $category->description = $request->description;
+        $category->opening_hours = $request->opening_hours;
+        $category->location = $request->location;
+        $category->map_link = $request->map_link;
+
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($category->image) {
+                $oldImagePath = storage_path('app/public/' . $category->image);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->extension();
+            $image->storeAs('public/categories', $imageName);
+            $category->image = 'categories/' . $imageName;
+        }
+
         $category->save();
 
         return redirect()->route('categories.index')->with('success', 'Category updated successfully');
@@ -55,6 +101,14 @@ class CategoryController extends Controller
     //destroy
     public function destroy(Category $category)
     {
+        // Delete image if exists
+        if ($category->image) {
+            $imagePath = storage_path('app/public/' . $category->image);
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+        }
+
         $category->delete();
         return redirect()->route('categories.index')->with('success', 'Category deleted successfully');
     }
